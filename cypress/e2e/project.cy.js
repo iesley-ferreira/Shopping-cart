@@ -2,7 +2,7 @@ const fetchMock = require('../mocks/fetch');
 const {results: products, pictures} = require('../mocks/computerCategory');
 const { fetchProductsList, fetchProduct } = require('../../src/helpers/fetchFunctions');
 
-const PROJECT_URL = 'localhost:5175'; //5173
+const PROJECT_URL = 'localhost:5173';
 const LOADING = '.loading';
 const ERRO = '.error';
 const PRODUCT_SELECTOR = '.product';
