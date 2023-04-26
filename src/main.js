@@ -1,4 +1,4 @@
-import { saveCartID } from './helpers/cartFunctions';
+import { getSavedCartIDs, saveCartID } from './helpers/cartFunctions';
 import { searchCep } from './helpers/cepFunctions';
 import { fetchProduct, fetchProductsList } from './helpers/fetchFunctions';
 import { createCartProductElement, createProductElement } from './helpers/shopFunctions';
@@ -15,9 +15,9 @@ productsEl.appendChild(loading);
 const addCart = async (ID) => {
   const prodInfo = await fetchProduct(ID);
   saveCartID(ID);
-  const prodExibition = createCartProductElement(prodInfo);
+  const prodExhibition = createCartProductElement(prodInfo);
   const cart = document.querySelector('.cart__products');
-  cart.appendChild(prodExibition);
+  cart.appendChild(prodExhibition);
 };
 
 try {
@@ -39,4 +39,15 @@ document.addEventListener('click', (event) => {
     const clickProdID = event.target.parentNode.firstChild.innerText;
     addCart(clickProdID);
   }
+});
+
+const olCartEl = document.querySelector('body > section > section.cart > ol');
+const arr = getSavedCartIDs();
+const prodInfo = arr.map((item) => fetchProduct(item));
+
+Promise.all(prodInfo).then((values) => {
+  values.forEach((prod) => {
+    const li = createCartProductElement(prod);
+    olCartEl.appendChild(li);
+  });
 });
