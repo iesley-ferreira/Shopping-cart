@@ -26,5 +26,9 @@ describe('Teste a função fetchProductsList', () => {
   it(`Teste se fetchProductsList ao ser chamada sem argumento, retorna um erro com a mensagem: 'Termo de busca não informado'`, async () => {
     await expect(fetchProductsList()).rejects.toThrow('Termo de busca não informado');
   });
+
+  it(`Teste se fetchProductsList ao não conseguir consultar a API, retorna um erro com a mensagem: 'Algum erro ocorreu, recarregue a página e tente novamente'`, async () => {
+    await expect(fetchProductsList('XABALABADUB')).rejects.toThrow('Algum erro ocorreu, recarregue a página e tente novamente');
+  });
  
 });
