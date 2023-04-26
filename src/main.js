@@ -1,6 +1,7 @@
+import { saveCartID } from './helpers/cartFunctions';
 import { searchCep } from './helpers/cepFunctions';
-import { fetchProductsList } from './helpers/fetchFunctions';
-import { createProductElement } from './helpers/shopFunctions';
+import { fetchProduct, fetchProductsList } from './helpers/fetchFunctions';
+import { createCartProductElement, createProductElement } from './helpers/shopFunctions';
 import './style.css';
 
 document.querySelector('.cep-button').addEventListener('click', searchCep);
@@ -10,6 +11,14 @@ const loading = document.createElement('h2');
 loading.className = 'loading';
 loading.innerText = 'carregando...';
 productsEl.appendChild(loading);
+
+const addCart = async (ID) => {
+  const prodInfo = await fetchProduct(ID);
+  saveCartID(ID);
+  const prodExibition = createCartProductElement(prodInfo);
+  const cart = document.querySelector('.cart__products');
+  cart.appendChild(prodExibition);
+};
 
 try {
   const productList = await fetchProductsList('computador');
@@ -24,3 +33,10 @@ try {
   err.innerText = error.message;
   productsEl.appendChild(err);
 }
+
+document.addEventListener('click', (event) => {
+  if (event.target.className === 'product__add') {
+    const clickProdID = event.target.parentNode.firstChild.innerText;
+    addCart(clickProdID);
+  }
+});
