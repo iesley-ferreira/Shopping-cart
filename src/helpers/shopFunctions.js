@@ -1,5 +1,5 @@
-import { removeCartID } from './cartFunctions';
-
+import { getSavedCartIDs, removeCartID, saveCartID } from './cartFunctions';
+import { fetchProduct } from './fetchFunctions';
 // Esses comentários que estão antes de cada uma das funções são chamados de JSdoc,
 // experimente passar o mouse sobre o nome das funções e verá que elas possuem descrições!
 
@@ -40,6 +40,15 @@ export const getIdFromProduct = (product) => (
   product.querySelector('span.product__id').innerText
 );
 
+export const sumProductsPrice = async () => {
+  const spanPriceEl = document.querySelector('.total-price');
+  const arr = getSavedCartIDs();
+
+  const arrProdsInfo = await Promise.all(arr.map(async (item) => fetchProduct(item)));
+  const totalPrice = arrProdsInfo.reduce((acc, curr) => (acc + curr.price), 0);
+  spanPriceEl.innerText = (totalPrice).toFixed(2);
+};
+
 /**
  * Função que remove o produto do carrinho.
  * @param {Element} li - Elemento do produto a ser removido do carrinho.
@@ -48,6 +57,7 @@ export const getIdFromProduct = (product) => (
 const removeCartProduct = (li, id) => {
   li.remove();
   removeCartID(id);
+  sumProductsPrice();
 };
 
 /**
@@ -85,10 +95,22 @@ export const createCartProductElement = ({ id, title, price, pictures }) => {
     'material-icons cart__product__remove',
     'delete',
   );
+
   li.appendChild(removeButton);
 
-  li.addEventListener('click', () => removeCartProduct(li, id));
+  li.addEventListener('click', () => {
+    removeCartProduct(li, id);
+  });
+
   return li;
+};
+
+const addCart = async (id) => {
+  const productInfo = await fetchProduct(id);
+  const cartProductExhibition = createCartProductElement(productInfo);
+  const cart = document.querySelector('.cart__products');
+  cart.appendChild(cartProductExhibition);
+  sumProductsPrice();
 };
 
 /**
@@ -121,7 +143,11 @@ export const createProductElement = ({ id, title, thumbnail, price }) => {
     'product__add',
     'Adicionar ao carrinho!',
   );
-  section.appendChild(cartButton);
+  cartButton.addEventListener('click', () => {
+    addCart(id);
+    saveCartID(id);
+  });
 
+  section.appendChild(cartButton);
   return section;
 };
