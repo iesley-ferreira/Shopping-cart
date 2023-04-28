@@ -5,7 +5,11 @@ import { createCartProductElement,
   createProductElement, sumProductsPrice } from './helpers/shopFunctions';
 import './style.css';
 
-document.querySelector('.cep-button').addEventListener('click', searchCep);
+document.querySelector('.cep-button').addEventListener('click', () => {
+  const inputPreenchido = 8;
+  const validaCep = document.querySelector('.cep-input').value.length === inputPreenchido;
+  if (validaCep) searchCep();
+});
 
 // CRIA OS PRODUTOS E POPULA A SECTION PRINCIPAL DO SITE
 const criaProdutos = async () => {
